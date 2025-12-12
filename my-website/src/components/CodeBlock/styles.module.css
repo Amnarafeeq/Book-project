@@ -1,0 +1,17 @@
+.codeBlock {
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+}
+
+.codeBlock pre {
+  margin: 0;
+  padding: 1rem;
+  background: var(--ifm-code-background) !important;
+}
+
+.codeBlock code {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9em;
+}

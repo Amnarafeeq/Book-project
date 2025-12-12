@@ -1,0 +1,36 @@
+.navbar {
+  box-shadow: var(--ifm-navbar-shadow);
+  background-color: var(--ifm-navbar-background-color) !important;
+  transition: all 0.3s ease;
+}
+
+.navbar__title {
+  font-weight: 600;
+  margin-left: 0.5rem;
+  color: var(--ifm-color-gray-900);
+}
+
+[data-theme='dark'] .navbar__title {
+  color: var(--ifm-color-content);
+}
+
+.navbar__item, .navbar__link {
+  color: var(--ifm-color-gray-600) !important;
+  transition: color 0.3s ease;
+  position: relative;
+  font-weight: 500;
+}
+
+[data-theme='dark'] .navbar__item,
+[data-theme='dark'] .navbar__link {
+  color: var(--ifm-color-content-secondary) !important;
+}
+
+.navbar__item:hover, .navbar__link:hover {
+  color: var(--ifm-color-primary) !important;
+}
+
+.navbar__link--active {
+  color: var(--ifm-color-primary) !important;
+  font-weight: 600;
+}

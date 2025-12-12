@@ -1,0 +1,77 @@
+# Module 1: Introduction to ROS 2
+
+## 2.2 Sensor Integration Workflow
+
+Integrating sensors into a ROS 2 application is a crucial step for enabling robots to perceive their environment. This section outlines a general workflow for integrating common sensors, such as depth cameras (e.g., Intel RealSense), into a ROS 2 system, focusing on both simulation and real-world deployment.
+
+### 2.2.1 Sensor Driver and ROS 2 Wrapper
+
+Most modern sensors come with their own drivers and often a ROS 2 wrapper package that handles the low-level communication with the hardware and publishes data to standard ROS 2 topics. For example, Intel RealSense cameras have a dedicated `realsense-ros` package.
+
+**Workflow:**
+1.  **Install Sensor Drivers:** Install the manufacturer's drivers for the sensor on your robot's operating system (e.g., `librs-depth-sense-dev` for RealSense).
+2.  **Install ROS 2 Wrapper:** Install the official or community-maintained ROS 2 wrapper package for your sensor (e.g., `ros-<distro>-realsense2-camera` for RealSense).
+3.  **Launch Wrapper Node:** Run the ROS 2 launch file provided by the wrapper package to start the sensor node. This node will typically publish data such as:
+    -   `sensor_msgs/Image` (color, depth, infrared streams)
+    -   `sensor_msgs/PointCloud2` (3D point cloud data)
+    -   `sensor_msgs/CameraInfo` (camera calibration parameters)
+    -   `sensor_msgs/Imu` (IMU data, if available)
+    -   `tf2_msgs/TFMessage` (sensor's transform relative to the robot base)
+
+### 2.2.2 Data Visualization in RViz2
+
+RViz2 is the primary 3D visualization tool in ROS 2. It allows you to visualize sensor data, robot models, and other relevant information to understand your robot's perception.
+
+**Workflow:**
+1.  **Launch RViz2:** Start RViz2 using `ros2 run rviz2 rviz2` or a launch file.
+2.  **Add Displays:** In RViz2, add appropriate displays for your sensor data:
+    -   **Image:** For visualizing `sensor_msgs/Image` topics.
+    -   **PointCloud2:** For visualizing `sensor_msgs/PointCloud2` topics.
+    -   **Camera:** A specialized display for camera streams that can show both image and depth data.
+    -   **TF:** To visualize the coordinate frames (transforms) of your robot and sensors.
+3.  **Configure Topics and Frames:** For each display, configure the correct ROS 2 topic and ensure the fixed frame is set appropriately (e.g., `odom` or `base_link`).
+
+### 2.2.3 Sensor Simulation (Gazebo)
+
+Simulating sensors is vital for developing and testing robot applications without requiring physical hardware. Gazebo is a popular physics simulator that integrates well with ROS 2.
+
+**Workflow:**
+1.  **Create Gazebo Model with Sensor:** Define your robot's URDF file to include the sensor model. Gazebo provides plugins for various sensor types (e.g., `libgazebo_ros_depth_camera.so` for depth cameras).
+    -   **Example URDF snippet for a depth camera:**
+        ```xml
+        <gazebo reference="camera_link">
+          <sensor type="depth" name="camera">
+            <always_on>true</always_on>
+            <update_rate>30.0</update_rate>
+            <camera>
+              <horizontal_fov>1.047</horizontal_fov>
+              <image>
+                <width>640</width>
+                <height>480</height>
+                <format>R8G8B8</format>
+              </image>
+              <clip>
+                <near>0.1</near>
+                <far>10</far>
+              </clip>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_depth_camera.so">
+              <alwaysOn>true</alwaysOn>
+              <updateRate>30.0</updateRate>
+              <cameraName>camera</cameraName>
+              <frameName>camera_depth_frame</frameName>
+              <pointCloudCutoff>0.4</pointCloudCutoff>
+              <pointCloudTopic>depth/color/points</pointCloudTopic>
+              <depthImageTopic>depth/image_raw</depthImageTopic>
+              <rangeTopic>depth/range</rangeTopic>
+              <min_range>0.1</min_range>
+              <max_range>10.0</max_range>
+              <hack_baseline>0.07</hack_baseline>
+            </plugin>
+          </sensor>
+        </gazebo>
+        ```
+2.  **Launch Gazebo World:** Start Gazebo with your robot model and the simulated sensor.
+3.  **Verify Data Publication:** Use `ros2 topic list`, `ros2 topic echo`, and RViz2 to verify that the simulated sensor is publishing data correctly on its designated topics, similar to a real sensor.
+
+This comprehensive workflow ensures that your robot can perceive its environment, whether through real hardware or accurate simulations, forming the basis for advanced robotic applications.
